@@ -13,19 +13,27 @@ public class Player : NetworkBehaviour
 
 
 
-    private void OnButton<T>(T par, Func<T> func) 
-        where T: new()
-    {
-        delay = TickTimer.CreateFromSeconds(Runner, 0.5f);
-        Runner.Spawn<T>( par,
-            transform.position + _forward,
-            Quaternion.LookRotation(_forward),
-            Object.InputAuthority
-            // (runner, o) => {
-            //     // Initialize the Ball before synchronizing
-            //     o.GetComponent<T>().Init();
-            // }
-        );
+    private void CheckButton(NetworkInputData data) { 
+        if ((data.buttons & NetworkInputData.MOUSEBUTTON1) != 0) {
+            delay = TickTimer.CreateFromSeconds(Runner, 0.1f);
+            Runner.Spawn(_prefabBall,
+                transform.position + _forward, Quaternion.LookRotation(_forward),
+                Object.InputAuthority, (runner, o) => {
+                    // Initialize the Ball before synchronizing
+                    o.GetComponent<Ball>().Init();
+                });
+        }
+        else if ((data.buttons & NetworkInputData.MOUSEBUTTON2) != 0) {
+            delay = TickTimer.CreateFromSeconds(Runner, 0.5f);
+            Runner.Spawn(_prefabPhysxBall,
+                transform.position + _forward,
+                Quaternion.LookRotation(_forward),
+                Object.InputAuthority,
+                (runner, o) =>
+                {
+                    o.GetComponent<PhysxBall>().Init(10 * _forward);
+                });
+        }
     }
 
     private void Awake()
@@ -46,27 +54,8 @@ public class Player : NetworkBehaviour
             }
 
             if (delay.ExpiredOrNotRunning(Runner)) {
-                if ((data.buttons & NetworkInputData.MOUSEBUTTON1) != 0) {
-                    delay = TickTimer.CreateFromSeconds(Runner, 0.5f);
-                    Runner.Spawn(_prefabBall,
-                        transform.position + _forward, Quaternion.LookRotation(_forward),
-                        Object.InputAuthority, (runner, o) => {
-                            // Initialize the Ball before synchronizing
-                            o.GetComponent<Ball>().Init();
-                        });
-                }
-                else if ((data.buttons & NetworkInputData.MOUSEBUTTON2) != 0) {
-                    delay = TickTimer.CreateFromSeconds(Runner, 0.5f);
-                    Runner.Spawn(_prefabPhysxBall,
-                        transform.position + _forward,
-                        Quaternion.LookRotation(_forward),
-                        Object.InputAuthority,
-                        (runner, o) =>
-                        {
-                            o.GetComponent<PhysxBall>().Init(10 * _forward);
-                        });
-                }
-            }
+                CheckButton(data);
+            }   
 
         }
     }
