@@ -11,4 +11,7 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/HostMode.unity
     guid: 9fc0d4010bbf28b4594072e72b8655ab
-  m_configObjects: {}
+  m_configObjects:
+    com.unity.input.settings: {fileID: 11400000, guid: fb8d9925e66ca5b44b8a7d40bfa3e490, type: 2}
+    com.unity.xr.management.loader_settings: {fileID: 11400000, guid: f36afb6a3d734204cb90b7279710e881, type: 2}
+    com.unity.xr.openxr.settings4: {fileID: 11400000, guid: b4e23ca6d43472e43bd52eee3d14e2c4, type: 2}
