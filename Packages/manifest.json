@@ -4,6 +4,7 @@
     "com.htc.upm.vive.openxr": "https://github.com/ViveSoftware/VIVE-OpenXR.git?path=com.htc.upm.vive.openxr",
     "com.readyplayerme.core": "https://github.com/readyplayerme/rpm-unity-sdk-core.git",
     "com.readyplayerme.webview": "https://github.com/readyplayerme/rpm-unity-sdk-webview.git#v2.0.0",
+    "com.unity.animation.rigging": "1.2.1",
     "com.unity.collab-proxy": "2.0.4",
     "com.unity.feature.development": "1.0.1",
     "com.unity.ide.visualstudio": "2.0.22",

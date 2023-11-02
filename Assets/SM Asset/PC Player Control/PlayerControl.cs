@@ -14,10 +14,15 @@ public class PlayerControl : NetworkBehaviour
     [SerializeField] private InputActionAsset actionAsset;
 
     [SerializeField] private Rigidbody rigidbody;
-    
-    private Camera Camera;
+    public GameObject Camera;
+    public Transform ikHead;
+    public Transform avatar;
+
     [SerializeField] private float PlayerSpeed = 2f;
     [SerializeField] private float JumpStrength = 200f;
+
+    public const int MAX_JUMP = 2;
+    private int jumpCount = 0;
 
 
     private void OnEnable() {
@@ -28,37 +33,15 @@ public class PlayerControl : NetworkBehaviour
 
     }
 
-    // void Update() {
-    //     if (jumpButton.action.triggered) {
-    //         print("jump");
-    //         rigidbody.AddForce( Vector3.up * 500 );
-    //     }
-
-    //     Vector2 moveAmount = walkRef.action.ReadValue<Vector2>();
-    //     float x = moveAmount.x * Time.deltaTime;
-    //     float y = moveAmount.y * Time.deltaTime;
-
-    //     transform.Translate( x, 0, y );
-    // }
-
     public override void FixedUpdateNetwork()
     {
         //Only move own player and not other player
         if (HasStateAuthority == false) return;
 
-        // var cameraRotationY = Quaternion.Euler(0, Camera.transform.rotation.eulerAngles.y, 0);
-        
-    
-
-        // if (move != Vector3.zero) {
-        //     gameObject.transform.forward = move;
-        //     // print(move);
-        // }
-
-        if (jumpButton.action.triggered) {
+        if (jumpButton.action.triggered && jumpCount > 0) {
             print("jump");
             rigidbody.AddForce( Vector3.up * JumpStrength );
-            
+            jumpCount--;
         }
 
         //camera forward and right vectors:
@@ -78,6 +61,9 @@ public class PlayerControl : NetworkBehaviour
         
         //now we can apply the movement:
         transform.Translate(PlayerSpeed * Runner.DeltaTime * desiredMoveDirection);
+        transform.rotation = Camera.transform.rotation;
+        avatar.SetPositionAndRotation(Camera.transform.position, Camera.transform.rotation);
+        ikHead.SetPositionAndRotation(Camera.transform.position, Camera.transform.rotation);
     
     }
 
@@ -85,10 +71,28 @@ public class PlayerControl : NetworkBehaviour
     {
         if (HasStateAuthority)
         {
-            Camera = gameObject.AddComponent<Camera>();
-            Camera.AddComponent<FirstPersonCamera>().Target = GetComponent<NetworkTransform>().InterpolationTarget;
-            // Camera.GetComponent<FirstPersonCamera>().Target = GetComponent<NetworkTransform>().InterpolationTarget;
+            Vector3 camPos = transform.position;
+            camPos.y += 0.5f;
+
+            // GameObject newCam = Instantiate(Camera, camPos, transform.rotation);
+            // newCam.transform.parent = gameObject.transform.GetChild(0).GetChild(0);
+            Camera.GetComponent<FirstPersonCamera>().Target = GetComponent<NetworkRigidbody>().InterpolationTarget;
+            // Camera = newCam;
+            // print("spawned");
+            // GetComponentInChildren<FirstPersonCamera>().Target = GetComponent<NetworkTransform>().InterpolationTarget;        
+            // Camera = gameObject.AddComponent<Camera>();
+            // Camera.AddComponent<FirstPersonCamera>().Target = GetComponent<NetworkTransform>().InterpolationTarget;
         }
     }
+
+    private void OnCollisionEnter(Collision collision) {
+        if (collision.gameObject.CompareTag("Jumpable")) {
+            jumpCount = MAX_JUMP;
+        }
+    }
+
+    // void Update() {
+
+    // }
 
 }
