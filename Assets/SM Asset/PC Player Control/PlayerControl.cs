@@ -23,7 +23,10 @@ public class PlayerControl : NetworkBehaviour
 
     public const int MAX_JUMP = 2;
     private int jumpCount = 0;
-
+    private float horizontalInput;
+    private float verticalInput;
+    private Vector3 moveDirection;
+    public Transform orientation;
 
     private void OnEnable() {
         
@@ -33,55 +36,51 @@ public class PlayerControl : NetworkBehaviour
 
     }
 
+    void Update() {
+        MyInput();
+        SpeedControl();
+    }
+
     public override void FixedUpdateNetwork()
     {
         //Only move own player and not other player
         if (HasStateAuthority == false) return;
 
         if (jumpButton.action.triggered && jumpCount > 0) {
-            print("jump");
             rigidbody.AddForce( Vector3.up * JumpStrength );
             jumpCount--;
         }
 
-        //camera forward and right vectors:
-        var forward = Camera.transform.forward;
-        var right = Camera.transform.right;
-        //reading the input:
-        Vector2 moveAmount = walkRef.action.ReadValue<Vector2>();
-        float horizontalAxis = moveAmount.x;
-        float verticalAxis = moveAmount.y;
-        //project forward and right vectors on the horizontal plane (y = 0)
-        forward.y = 0f;
-        right.y = 0f;
-        forward.Normalize();
-        right.Normalize();
-        //this is the direction in the world space we want to move:
-        var desiredMoveDirection = forward * verticalAxis + right * horizontalAxis;
+        MovePlayer();
+
+        // //camera forward and right vectors:
+        // var forward = Camera.transform.forward;
+        // var right = Camera.transform.right;
+        // //reading the input:
+        // Vector2 moveAmount = walkRef.action.ReadValue<Vector2>();
+        // float horizontalAxis = moveAmount.x;
+        // float verticalAxis = moveAmount.y;
+        // //project forward and right vectors on the horizontal plane (y = 0)
+        // forward.y = 0f;
+        // right.y = 0f;
+        // forward.Normalize();
+        // right.Normalize();
+        // //this is the direction in the world space we want to move:
+        // var desiredMoveDirection = forward * verticalAxis + right * horizontalAxis;
         
-        //now we can apply the movement:
-        transform.Translate(PlayerSpeed * Runner.DeltaTime * desiredMoveDirection);
-        // transform.rotation = Camera.transform.rotation;
-        // avatar.SetPositionAndRotation(Camera.transform.position, Camera.transform.rotation);
-        // ikHead.SetPositionAndRotation(Camera.transform.position, Camera.transform.rotation);
+        // //now we can apply the movement:
+        // transform.Translate(PlayerSpeed * Runner.DeltaTime * desiredMoveDirection);
+        // // transform.rotation = Camera.transform.rotation;
+        // // avatar.SetPositionAndRotation(Camera.transform.position, Camera.transform.rotation);
+        // // ikHead.SetPositionAndRotation(Camera.transform.position, Camera.transform.rotation);
     
     }
 
     public override void Spawned()
     {
         if (HasStateAuthority)
-        {
-            // Vector3 camPos = transform.position;
-            // camPos.y += 0.5f;
-
-            // GameObject newCam = Instantiate(Camera, camPos, transform.rotation);
-            // newCam.transform.parent = gameObject.transform.GetChild(0).GetChild(0);
-            Camera.GetComponent<FirstPersonCamera>().Target = GetComponent<NetworkRigidbody>().InterpolationTarget;
-            // Camera = newCam;
-            // print("spawned");
-            // GetComponentInChildren<FirstPersonCamera>().Target = GetComponent<NetworkTransform>().InterpolationTarget;        
-            // Camera = gameObject.AddComponent<Camera>();
-            // Camera.AddComponent<FirstPersonCamera>().Target = GetComponent<NetworkTransform>().InterpolationTarget;
+        {   
+           Camera.GetComponent<FirstPersonCamera>().Target = GetComponent<NetworkRigidbody>().InterpolationTarget;
         }
     }
 
@@ -91,8 +90,30 @@ public class PlayerControl : NetworkBehaviour
         }
     }
 
-    // void Update() {
+    private void MyInput() {
+        
+        Vector2 input = walkRef.action.ReadValue<Vector2>();
 
-    // }
+        horizontalInput = input.x;
+        verticalInput = input.y;
+
+    }
+
+    private void MovePlayer() {
+
+        moveDirection = orientation.forward * verticalInput + orientation.right * horizontalInput;
+
+        rigidbody.AddForce(moveDirection.normalized * PlayerSpeed * 10f, ForceMode.Force);
+
+    }
+
+    private void SpeedControl() {
+        Vector3 flatVel = new Vector3(rigidbody.velocity.x, 0f, rigidbody.velocity.z);
+
+        if (flatVel.magnitude > PlayerSpeed) {
+            Vector3 limitedVel = flatVel.normalized * PlayerSpeed;
+            rigidbody.velocity = new Vector3(limitedVel.x, rigidbody.velocity.y, limitedVel.z);
+        }
+    }
 
 }
