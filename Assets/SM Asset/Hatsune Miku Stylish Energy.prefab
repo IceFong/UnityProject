@@ -54,8 +54,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1874345005504468308}
-  m_LocalRotation: {x: 0.82060015, y: -0.37818176, z: -0.37818187, w: -0.20142642}
-  m_LocalPosition: {x: -0.42360622, y: 6.0295024, z: 0.012134671}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -401,7 +401,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2899290916689002645}
-  m_LocalRotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071067}
+  m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
   m_LocalPosition: {x: -0, y: 0, z: 0}
   m_LocalScale: {x: 100, y: 100, z: 100}
   m_ConstrainProportionsScale: 0
@@ -410,7 +410,7 @@ Transform:
   - {fileID: 2899290916689042749}
   m_Father: {fileID: 2899290916689042583}
   m_RootOrder: -1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
 --- !u!1 &2899290916689002647
 GameObject:
   m_ObjectHideFlags: 0
@@ -1584,6 +1584,8 @@ GameObject:
   - component: {fileID: 3304799915723695082}
   - component: {fileID: 1576547724310937024}
   - component: {fileID: 8895704687136229732}
+  - component: {fileID: 6819428062232905026}
+  - component: {fileID: 7685817999833416484}
   m_Layer: 0
   m_Name: Hatsune Miku Stylish Energy
   m_TagString: Untagged
@@ -1598,7 +1600,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2899290916689002743}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
   m_LocalPosition: {x: 0, y: -0.513, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1610,8 +1612,8 @@ Transform:
   - {fileID: 4487544262934353723}
   - {fileID: 9096049864703814860}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_RootOrder: -1
+  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!95 &2899290916681593681
 Animator:
   serializedVersion: 5
@@ -1751,10 +1753,6 @@ MonoBehaviour:
     m_Active: 1
   - m_Rig: {fileID: 968427348497074871}
     m_Active: 1
-  - m_Rig: {fileID: 0}
-    m_Active: 1
-  - m_Rig: {fileID: 0}
-    m_Active: 1
   - m_Rig: {fileID: 7231423379777538320}
     m_Active: 1
   m_Effectors: []
@@ -1788,6 +1786,46 @@ MonoBehaviour:
   turnSmoothness: 0
   ikHead: {fileID: 4487544262934353723}
   headBodyOffset: {x: 0, y: 0, z: 0}
+--- !u!54 &6819428062232905026
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2899290916689002743}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
+--- !u!114 &7685817999833416484
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2899290916689002743}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f7e5b33a41c67c42b17ea490ea8d0d9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  orientation: {fileID: 0}
 --- !u!1 &2899290916689002745
 GameObject:
   m_ObjectHideFlags: 0
@@ -3002,8 +3040,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4076896631524172197}
-  m_LocalRotation: {x: 0.82060003, y: 0.37818184, z: 0.37818184, w: -0.20142642}
-  m_LocalPosition: {x: 0.4236064, y: 6.029502, z: 0.01213479}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3036,7 +3074,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4535285736394350045}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.053198356, y: 1.0295014, z: -0.39249372}
+  m_LocalPosition: {x: 0.053198356, y: 1.0295018, z: -0.39249384}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -3139,8 +3177,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6874526042464894749}
-  m_LocalRotation: {x: 0.0039127762, y: -0.7375971, z: 0.0042742486, w: 0.67521626}
-  m_LocalPosition: {x: 0.018186335, y: 1.3901178, z: 0.029669404}
+  m_LocalRotation: {x: 0.0039128056, y: -0.73759717, z: 0.0042741885, w: 0.6752163}
+  m_LocalPosition: {x: 0.018186335, y: 1.3901179, z: 0.029669523}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3238,7 +3276,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7220410162270601721}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.021471154, y: 1.0295014, z: 0.45142186}
+  m_LocalPosition: {x: -0.021471154, y: 1.0295017, z: 0.45142192}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -3310,8 +3348,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7816643023895661791}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -4.487, z: 0}
+  m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3350,7 +3388,7 @@ MonoBehaviour:
     m_SourceObjects:
       m_Length: 1
       m_Item0:
-        transform: {fileID: 4487544262934353723}
+        transform: {fileID: 2899290916689042585}
         weight: 1
       m_Item1:
         transform: {fileID: 0}

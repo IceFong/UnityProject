@@ -5,28 +5,35 @@ using UnityEngine.InputSystem;
 
 public class PlayerControl : NetworkBehaviour
 {
-    
-    [SerializeField] private InputActionReference jumpButton;
-    [SerializeField] private InputActionReference walkRef;
-    // [SerializeField] private InputActionReference jumpButton;
-    // [SerializeField] private InputActionReference jumpButton;
-    // [SerializeField] private InputActionReference jumpButton;
     [SerializeField] private InputActionAsset actionAsset;
+    [SerializeField] private InputActionReference jumpRef;
+    [SerializeField] private InputActionReference walkRef;
+    
 
     [SerializeField] private Rigidbody rigidbody;
-    public GameObject Camera;
-    // public Transform ikHead;
-    // public Transform avatar;
+    [SerializeField] private Camera Camera;
 
-    [SerializeField] private float PlayerSpeed = 2f;
-    [SerializeField] private float JumpStrength = 200f;
+    
 
-    public const int MAX_JUMP = 2;
-    private int jumpCount = 0;
+    //Player movement
     private float horizontalInput;
     private float verticalInput;
+    public float PlayerSpeed = 2f;
     private Vector3 moveDirection;
     public Transform orientation;
+    public float groundDrag;
+
+    //Ground Check
+    public float playerHeight;
+    public LayerMask Jumpable;
+    bool grounded;
+    
+
+    public float jumpForce;
+    public float jumpCooldown;
+    public float airMultiplier;
+    bool readyToJump;
+    bool netDoJump;
 
     private void OnEnable() {
         
@@ -37,8 +44,12 @@ public class PlayerControl : NetworkBehaviour
     }
 
     void Update() {
+
+        grounded = Physics.Raycast(rigidbody.transform.position, Vector3.down, playerHeight * 0.5f + 0.2f, Jumpable);
+
         MyInput();
         SpeedControl();
+
     }
 
     public override void FixedUpdateNetwork()
@@ -46,49 +57,34 @@ public class PlayerControl : NetworkBehaviour
         //Only move own player and not other player
         if (HasStateAuthority == false) return;
 
-        if (jumpButton.action.triggered && jumpCount > 0) {
-            rigidbody.AddForce( Vector3.up * JumpStrength );
-            jumpCount--;
-        }
-
         MovePlayer();
 
-        // //camera forward and right vectors:
-        // var forward = Camera.transform.forward;
-        // var right = Camera.transform.right;
-        // //reading the input:
-        // Vector2 moveAmount = walkRef.action.ReadValue<Vector2>();
-        // float horizontalAxis = moveAmount.x;
-        // float verticalAxis = moveAmount.y;
-        // //project forward and right vectors on the horizontal plane (y = 0)
-        // forward.y = 0f;
-        // right.y = 0f;
-        // forward.Normalize();
-        // right.Normalize();
-        // //this is the direction in the world space we want to move:
-        // var desiredMoveDirection = forward * verticalAxis + right * horizontalAxis;
-        
-        // //now we can apply the movement:
-        // transform.Translate(PlayerSpeed * Runner.DeltaTime * desiredMoveDirection);
-        // // transform.rotation = Camera.transform.rotation;
-        // // avatar.SetPositionAndRotation(Camera.transform.position, Camera.transform.rotation);
-        // // ikHead.SetPositionAndRotation(Camera.transform.position, Camera.transform.rotation);
+        if (grounded)
+            rigidbody.drag = groundDrag;
+        else 
+            rigidbody.drag = 0;
+
+        if (netDoJump) {
+            readyToJump = false;
+            Jump();
+            netDoJump = false;
+        }
     
     }
 
     public override void Spawned()
     {
         if (HasStateAuthority)
-        {   
-           Camera.GetComponent<FirstPersonCamera>().Target = GetComponent<NetworkRigidbody>().InterpolationTarget;
+        {  
+            Camera = Camera.main;
+            FirstPersonCamera fpc = Camera.GetComponent<FirstPersonCamera>();
+            fpc.Target = GetComponent<NetworkTransform>().InterpolationTarget;
+            fpc.orientation = transform.GetChild(2).transform;
+            fpc.cameraPosition = transform.GetChild(3).transform;
         }
     }
 
-    private void OnCollisionEnter(Collision collision) {
-        if (collision.gameObject.CompareTag("Jumpable")) {
-            jumpCount = MAX_JUMP;
-        }
-    }
+
 
     private void MyInput() {
         
@@ -97,13 +93,23 @@ public class PlayerControl : NetworkBehaviour
         horizontalInput = input.x;
         verticalInput = input.y;
 
+        if (jumpRef.action.triggered && readyToJump && grounded) {
+            netDoJump = true;
+            Invoke(nameof(ResetJump), jumpCooldown);
+        }
+
     }
 
     private void MovePlayer() {
 
         moveDirection = orientation.forward * verticalInput + orientation.right * horizontalInput;
 
-        rigidbody.AddForce(moveDirection.normalized * PlayerSpeed * 10f, ForceMode.Force);
+        // rigidbody.AddForce(moveDirection.normalized * PlayerSpeed * 10f, ForceMode.Force);
+
+        if (grounded)
+            rigidbody.AddForce(moveDirection.normalized * PlayerSpeed * 10f, ForceMode.Force);
+        else 
+            rigidbody.AddForce(moveDirection.normalized * PlayerSpeed * 10f * airMultiplier, ForceMode.Force);
 
     }
 
@@ -114,6 +120,16 @@ public class PlayerControl : NetworkBehaviour
             Vector3 limitedVel = flatVel.normalized * PlayerSpeed;
             rigidbody.velocity = new Vector3(limitedVel.x, rigidbody.velocity.y, limitedVel.z);
         }
+    }
+
+    private void Jump() {
+        rigidbody.velocity = new Vector3(rigidbody.velocity.x, 0, rigidbody.velocity.z);
+
+        rigidbody.AddForce(transform.up * jumpForce, ForceMode.Impulse);
+    }
+
+    private void ResetJump() {
+        readyToJump = true;
     }
 
 }
