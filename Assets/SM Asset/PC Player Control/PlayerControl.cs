@@ -15,8 +15,8 @@ public class PlayerControl : NetworkBehaviour
 
     [SerializeField] private Rigidbody rigidbody;
     public GameObject Camera;
-    public Transform ikHead;
-    public Transform avatar;
+    // public Transform ikHead;
+    // public Transform avatar;
 
     [SerializeField] private float PlayerSpeed = 2f;
     [SerializeField] private float JumpStrength = 200f;
@@ -61,9 +61,9 @@ public class PlayerControl : NetworkBehaviour
         
         //now we can apply the movement:
         transform.Translate(PlayerSpeed * Runner.DeltaTime * desiredMoveDirection);
-        transform.rotation = Camera.transform.rotation;
-        avatar.SetPositionAndRotation(Camera.transform.position, Camera.transform.rotation);
-        ikHead.SetPositionAndRotation(Camera.transform.position, Camera.transform.rotation);
+        // transform.rotation = Camera.transform.rotation;
+        // avatar.SetPositionAndRotation(Camera.transform.position, Camera.transform.rotation);
+        // ikHead.SetPositionAndRotation(Camera.transform.position, Camera.transform.rotation);
     
     }
 
@@ -71,8 +71,8 @@ public class PlayerControl : NetworkBehaviour
     {
         if (HasStateAuthority)
         {
-            Vector3 camPos = transform.position;
-            camPos.y += 0.5f;
+            // Vector3 camPos = transform.position;
+            // camPos.y += 0.5f;
 
             // GameObject newCam = Instantiate(Camera, camPos, transform.rotation);
             // newCam.transform.parent = gameObject.transform.GetChild(0).GetChild(0);

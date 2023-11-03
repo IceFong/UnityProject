@@ -4,11 +4,13 @@ public class FirstPersonCamera : MonoBehaviour
 {
     
     public Transform Target;
-    public Transform avatar;
+    // public Transform avatar;
     public Transform ikHeadTarget;
 
     public float turnSmoothness = 1.0f;
-    public float MouseSensitivity = 10f;
+    public float MouseSensitivity = 5f;
+
+    public Vector3 positionOffset;
 
     private float vertialRotation;
     private float horizontalRotation;
@@ -30,11 +32,18 @@ public class FirstPersonCamera : MonoBehaviour
 
         horizontalRotation += mouseX * MouseSensitivity;
 
-        transform.position = Target.position;
+        // transform.position = Target.position;
         transform.rotation = Quaternion.Euler(vertialRotation, horizontalRotation, 0);
         // avatar.position = ikHead.position;
         // avatar.forward = Vector3.Lerp(transform.forward, Vector3.ProjectOnPlane(ikHead.forward, Vector3.up).normalized,  Time.deltaTime * turnSmoothness);
-        ikHeadTarget.SetPositionAndRotation(transform.position, transform.rotation);
+        // Vector3 dir = transform.forward;
+        // dir.y = transform.position.y;
+        // dir.Normalize();
+        // ikHeadTarget.Translate(MouseSensitivity * Time.deltaTime * dir);
+        Quaternion rot = transform.rotation;
+        rot.y += 90;
+        ikHeadTarget.SetPositionAndRotation(transform.position, rot);
+
     }
 
 }
